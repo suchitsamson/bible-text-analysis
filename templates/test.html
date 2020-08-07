@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <nav id="headingNav" class="navbar navbar-dark bg-primary" style="display: none; background-color: #83446e;">
+        <h2 id="heading" style="display: none; text-align: center;">Top {{wordC}} Words in the book of {{book}}</h2>
+    </nav>
+    <section id="graph"></section>
+
+    <h6 id="footer" style="display: none; text-align: center; margin-left: 50px;">*Click bubble for verses</h6>
+    <h2 id="myError" style="display:none; text-align: center; background-color: red;">{{error}}</h2>
+    <p id="myTable" style="display:none">{{verses}}</p> 
+    <p id="myBook" style="display:none">{{book}}</p>
+    <p id="myCount" style="display:none">{{wordC}}</p>  
+    <p id="myText" style="display:none">{{words}}</p>
+    <div id="mySelection" class="container"></div> 
+    
+    <script>
+    var banner = document.getElementById("myError");
+    if ( banner.innerHTML == 'true') {
+        banner.style.display = "block";
+        var str = "";
+        if(document.getElementById("myBook").innerHTML == 'OT') str += "'OLD TESTAMENT'";
+        else if(document.getElementById("myBook").innerHTML == 'NT') str += "'NEW TESTAMENT'";
+        else str += "'" + document.getElementById("myBook").innerHTML;
+
+        if(document.getElementById("chapter").value){
+            str += ": "+ document.getElementById("chapter").value + "'";
+        } else {
+            str += "'";
+        }
+        banner.innerHTML = str + " does not correspond to a valid Reference. Please enter valid reference and try again.";
+    }
+    else {
+        var ch=document.getElementById("chapter").value == '300'? '': ':'+document.getElementById("chapter").value;
+        document.getElementById("heading").innerHTML+=ch;
+        var json = JSON.parse(document.getElementById("myText").innerHTML);
+
+        var jsonTab = JSON.parse(document.getElementById("myTable").innerHTML);
+
+        // D3 Bubble Chart 
+        var diameter = 600;
+
+        var svg = d3.select('#graph').append('svg')
+                        .attr('width', diameter)
+                        .attr('height', diameter);
+                        
+        var bubble = d3.layout.pack()
+                        .size([diameter, diameter])
+                        .value(function(d) {return d.size;})
+                        .sort(function(a, b) {
+                            return -(a.value - b.value)
+                        }) 
+                        .padding(3);
+
+        // generate data with calculated layout values and filter out the outer bubble
+        var nodes = bubble.nodes(processData(json))
+                            .filter(function(d) { return !d.children; });
+                            
+        var vis = svg.selectAll('circle')
+                        .data(nodes, function(d) { return d.name; });
+                        
+        var tooltip = d3.select("body")
+                            .append("div")
+                            .style("position", "absolute")
+                            .style("z-index", "10")
+                            .style("visibility", "hidden")
+                            .style("color", "white")
+                            .style("padding", "8px")
+                            .style("background-color", "rgba(0, 0, 0, 0.75)")
+                            .style("border-radius", "6px")
+                            .style("font", "12px sans-serif")
+                            .text("tooltip");
+        
+        var g = vis.enter().append("g");
+        
+        g.append('circle')
+                .on("click", function(d){ displayText(d.name); })
+                .on("mouseover", function(d) { tooltip.text(d.name.toUpperCase()+" : "+d.size);tooltip.style("visibility", "visible");})
+                .on("mousemove", function() { return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
+                    })
+                .on("mouseout", function(){ return tooltip.style("visibility", "hidden");})
+                .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
+                .attr('r', function(d) { return d.r; })
+                .attr('class', function(d) { return d.className; });
+                
+        g.append("text").text(function(d) { return d.children ? "" : d.name.toUpperCase();}).attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; }).attr('text-anchor', function(d) { return 'middle'; }).attr('fill', function(d) { return 'white'; });
+        
+        document.getElementById("heading").style.display = "block";
+        document.getElementById("headingNav").style.display = "block";
+        document.getElementById("footer").style.display = "block";
+    }
+
+    function processData(data) {
+    
+        var obj = data.words;
+        var newDataSet = [];
+            var ctr=0;
+        
+        for(var prop in obj) {
+            newDataSet.push({name: prop, className: "a"+(ctr++%7), size: obj[prop]});
+        }
+        return { children: newDataSet };
+    }
+    
+   function displayText(flag){
+
+        var bookName=document.getElementById("myBook").innerHTML;
+        var str='<table class="table table-bordered"><thead><tr><th style="background-color: #512a44" scope="col">#</th><th scope="col" style="text-align: center; background-color: #512a44">Verse</th><th style="background-color: #512a44" scope="col">Reference</th></tr></thead><tbody>';
+        
+        for (var value in jsonTab[flag]) {
+            var a=jsonTab[flag][value].split("#");
+            var index = parseInt(value) + 1;
+            if(index%2 == 0)
+                str+='<tr><th scope="row" style="background-color: #83446e">'+index+'</th><td style="text-align: center; background-color: #83446e">'+a[0]+'</td><td style="text-align: center; background-color: #83446e">'+bookName+' '+a[1]+'</td></tr>'; 
+            else
+                str+='<tr><th scope="row" style="background-color: #af6596">'+index+'</th><td style="text-align: center; background-color: #af6596">'+a[0]+'</td><td style="text-align: center; background-color: #af6596">'+bookName+' '+a[1]+'</td></tr>'; 
+        }
+        str+='</tbody></table>';
+            
+        document.getElementById("mySelection").innerHTML = str;
+    }
+
+    </script>
+</body>
+</html>

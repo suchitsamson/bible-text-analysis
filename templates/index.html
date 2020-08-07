@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <title>BibleTextAnalysis</title>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary" style="background-color: #83446e;">
+        <!-- Navbar content -->
+        <h2 style="font-size: 50px; font-weight: bold; text-align: center; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">BIBLE TEXT ANALYSIS</h2>
+      </nav>
+    <form action="#" method="post">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="userRadios" id="bookRadio" value="book" onclick="radioClicked()" checked>
+            <label class="form-check-label" for="bookRadio" style="color: white">
+              Book
+            </label>
+            <input class="form-check-input" type="radio" name="userRadios" id="passageRadio" value="passage" onclick="radioClicked()">
+            <label class="form-check-label" for="passageRadio" style="color: white">
+              Passage
+            </label>
+          </div>
+        <br/>
+        <label for="book" style="color: white">Choose a Book:</label>
+        <select name="book" id="book" >
+            <option value="OT">--OLD TESTAMENT--</option>
+            <option value="Genesis">Genesis</option>
+            <option value="Exodus">Exodus</option>
+            <option value="Leviticus">Leviticus</option>
+            <option value="Numbers">Numbers</option>
+            <option value="Deuteronomy">Deuteronomy</option>
+            <option value="Joshua">Joshua</option>
+            <option value="Judges">Judges</option>
+            <option value="Ruth">Ruth</option>
+            <option value="1Samuel">1 Samuel</option>
+            <option value="2Samuel">2 Samuel</option>
+            <option value="1Kings">1 Kings</option>
+            <option value="2Kings">2 Kings</option>
+            <option value="1Chronicles">1 Chronicles</option>
+            <option value="2Chronicles">2 Chronicles</option>
+            <option value="Ezra">Ezra</option>
+            <option value="Nehemiah">Nehemiah</option>
+            <option value="Esther">Esther</option>
+            <option value="Job">Job</option>
+            <option value="Psalms">Psalms</option>
+            <option value="Proverbs">Proverbs</option>
+            <option value="Ecclesiastes">Ecclesiastes</option>
+            <option value="Song of Solomon">Song of Solomon</option>
+            <option value="Isaiah">Isaiah</option>
+            <option value="Jeremiah">Jeremiah</option>
+            <option value="Lamentations">Lamentations</option>
+            <option value="Ezekiel">Ezekiel</option>
+            <option value="Daniel">Daniel</option>
+            <option value="Hosea">Hosea</option>
+            <option value="Joel">Joel</option>
+            <option value="Amos">Amos</option>
+            <option value="Obadiah">Obadiah</option>
+            <option value="Jonah">Jonah</option>
+            <option value="Micah">Micah</option>
+            <option value="Nahum">Nahum</option>
+            <option value="Habakkuk">Habakkuk</option>
+            <option value="Zephaniah">Zephaniah</option>
+            <option value="Haggai">Haggai</option>
+            <option value="Zechariah">Zechariah</option>
+            <option value="Malachi">Malachi</option>
+            <option value="NT">--NEW TESTAMENT--</option>
+            <option value="Matthew">Matthew</option>
+            <option value="Mark">Mark</option>
+            <option value="Luke">Luke</option>
+            <option value="John">John</option>
+            <option value="Acts">Acts</option>
+            <option value="Romans">Romans</option>
+            <option value="1Corinthians">1 Corinthians</option>
+            <option value="2Corinthians">2 Corinthians</option>
+            <option value="Galatians">Galatians</option>
+            <option value="Ephesians">Ephesians</option>
+            <option value="Philippians">Philippians</option>
+            <option value="Colossians">Colossians</option>
+            <option value="1Thessalonians">1 Thessalonians</option>
+            <option value="2Thessalonians">2 Thessalonians</option>
+            <option value="1Timothy">1 Timothy</option>
+            <option value="2Timothy">2 Timothy</option>
+            <option value="Titus">Titus</option>
+            <option value="Philemon">Philemon</option>
+            <option value="Hebrews">Hebrews</option>
+            <option value="James">James</option>
+            <option value="1Peter">1 Peter</option>
+            <option value="2Peter">2 Peter</option>
+            <option value="1John">1 John</option>
+            <option value="2John">2 John</option>
+            <option value="3John">3 John</option>
+            <option value="Jude">Jude</option>
+            <option value="Revelation">Revelation</option>
+        </select>
+        <br/><br/>
+        <label for="chapter" style="color: white">Choose a Chapter:</label>
+        <input type="text" class="form-control" id="chapter" name="chapter" disabled value={{chapt}}>
+        <br/><br/>
+        <label for="wCount" style="color: white">Choose a Number:</label>
+        <select name="wCount" id="wCount" >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+            <option value="30">30</option>
+        </select>
+        <br/><br/>
+        <input type="submit" value="submit"/>
+    </form>
+
+    {% include 'test.html' %}
+
+    <h2 id="warning" style="display: none; text-align: center;">!!Incorrect Book Selection!!</h2>
+
+    <script>
+        var bookName=document.getElementById("myBook").innerHTML;
+        if(bookName) {
+            document.getElementById("book").value = bookName;
+            var wC=document.getElementById("myCount").innerHTML;
+            if(wC)
+                document.getElementById("wCount").value = wC;
+        }
+        
+        if(document.getElementById("chapter").value!='' && document.getElementById("chapter").value!='300') {
+            document.getElementById("passageRadio").checked = true;
+            document.getElementById("chapter").disabled=false;
+        } else {
+            document.getElementById("chapter").value = '';
+        }
+
+        function radioClicked(){
+            if(document.getElementById("bookRadio").checked){
+                document.getElementById("chapter").disabled=true;
+                document.getElementById("chapter").value = '';
+            }
+                
+            else
+            document.getElementById("chapter").disabled=false;
+        }
+    </script>
+</body>
+</html>

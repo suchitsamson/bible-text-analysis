@@ -1,0 +1,50 @@
+form { 
+    margin: 0 auto; 
+    width:250px;
+    text-align: center;
+    padding: 50px;
+    color: black;
+    }
+
+body {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Roboto Light", "Segoe UI Web Light", "Segoe UI Light", "Segoe UI Web Regular", "Segoe UI", Helvetica, Arial, sans-serif; 
+    margin: 1em;
+    background: #293950;
+    color: white;
+    }
+
+section {
+    margin: 0 auto;
+    text-align: center;
+    }
+
+h1 {
+    font-weight: normal;
+    font-size: 2.4em;
+    margin-bottom: 0;
+    }
+
+a {
+    color: gold;
+    }
+    
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+    background-color: #800000;
+    color: white;
+}
+ /* Bubbles colors */   
+.a0 {fill: #DF4949; background: #DF4949; cursor: pointer}
+    
+.a1 {fill: #E27A3F; background: #E27A3F; cursor: pointer}
+    
+.a2 { fill: #EFC94C; background: #EFC94C; cursor: pointer}
+    
+.a3 { fill: #9B59B6; background:  #9B59B6; cursor: pointer}
+    
+.a4 {fill: #3498db; background: #3498db; cursor: pointer}
+    
+.a5 {fill: #F495A3; background: #F495A3; cursor: pointer}
+    
+.a6 { fill: #45B29D; background: #45B29D; cursor: pointer}
